@@ -1,0 +1,17 @@
+{% if request.user.is_authenticated %}
+<span class ="no-padding" style="margin:0;">
+		<a onclick='rateSimething("{{url}}", {{id}}, 1, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-1" class="fi-star {% if rate >= 1 %}active{% else %}inactive{% endif %}"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 2, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-2" class="fi-star {% if rate >= 2 %}active{% else %}inactive{% endif %}"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 3, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-3" class="fi-star {% if rate >= 3 %}active{% else %}inactive{% endif %}"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 4, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-4" class="fi-star {% if rate >= 4 %}active{% else %}inactive{% endif %}"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 5, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-5" class="fi-star {% if rate >= 5 %}active{% else %}inactive{% endif %}"></i></a>
+</span>
+{% else %}
+<span class ="no-padding"  style="margin:0;">
+		<a onclick='rateSimething("{{url}}", {{id}}, 1, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-1" class="fi-star inactive"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 3, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-3" class="fi-star inactive"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 2, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-2" class="fi-star inactive"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 4, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-4" class="fi-star inactive"></i></a>
+		<a onclick='rateSimething("{{url}}", {{id}}, 5, "{{token}}", "{{identif}}")'><i id="star-{{identif}}-5" class="fi-star inactive"></i></a>
+</span>
+{% endif %}

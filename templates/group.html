@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{ group.name }}
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'deletePost' %}",
+		data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+				if(response.id){
+					$('#pos-'+response.id).remove();
+					Materialize.toast( response.succesToastMsg, 4000, 'succesToastMsg' );
+				}
+			},
+		error: function(rs, e) {
+
+		}
+	});
+};
+function aClicked2(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'deletePersonInterest' id=group.id  %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				$('#personChip-'+response.id).remove();
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+function aClicked3(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'deleteMovieInterest' id=group.id %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				$('#movieChip-'+response.id).remove();
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+function aClicked4(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'deleteGroup' id=group.id %}",
+	data: { 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+		window.location.href = response.redirect;
+		},
+		error: function(rs, e) {
+
+		}
+});
+};
+$(document).ready(function() {
+    $('#search').keyup(function(event) {
+        if (event.keyCode == 13) {
+					$.ajax({
+						type: "POST",
+						url: "{% url 'searchInterest' %}",
+						data: {'search':$('#search').val(), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+						dataType: "json",
+						success: function(response) {
+							$(".search-results").empty();
+								if(response.movieInterestFound != null){
+									for(var i=0; i<response.movieInterestFound.length; i++){
+										var actualRes = response.movieInterestFound[i];
+										$('.search-results').append("<li><a class='btn-flat' onclick='addMovieInterest("+actualRes[0]+")'><i class='fi-plus'></i></a> "+actualRes[1]+"</li>");
+									};
+									for(var i=0; i<response.personInterestFound.length; i++){
+										var actualRes = response.personInterestFound[i];
+										$('.search-results').append("<li><a class='btn-flat' onclick='addPersonInterest("+actualRes[0]+")'><i class='fi-plus'></i></a> "+actualRes[1]+"</li>");
+									};
+								}
+							},
+							error: function(rs, e) {
+
+							}
+					});
+         }
+    });
+});
+function addMovieInterest(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'addMovieInterest' id=group.id %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				Materialize.toast( response.succesToastMsg, 4000, 'succesToastMsg' );
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+function addPersonInterest(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'addPersonInterest' id=group.id %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				Materialize.toast( response.succesToastMsg, 4000, 'succesToastMsg' );
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+	{% if request.user.is_authenticated %}
+	<div class="row">
+		<div class="col s12">
+			<div class="card-panel accent-color text-primary-color">
+				<h5>Post</h5>
+				<form method="post" action="">{% csrf_token %}
+					<div class="row">
+						<div class="input-field col s12">
+							<i class="fi-comment prefix"></i>
+							<textarea name="content" id="content" class="materialize-textarea" length="500" maxlength="500" required="true"></textarea>
+							<label for="review">Content</label>
+						</div>
+						<div class="col s12 center-align">
+								<button id="sendReview" class="btn waves-effect waves-light" type="submit" name="type" value="sendPost">Review<i class="fi-play right"></i></button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="row">
+		<div  class="col s12 cards-container">
+		{% for x in post %}
+			{% include 'modules/groupPost.html' with x=x %}
+		{% endfor %}
+		</div>
+	</div>
+
+		{% include "modules/pagination.html" with var=post only %}
+
+	</div>
+{% endblock %}
+
+{% block contentR %}
+
+	{% include 'modules/groupControls.html' %}
+	{% include 'modules/groupOwnerModals.html' %}
+
+	<div class="col s12 show-on-large">
+		<div class="card-panel">
+			<span>Members</span><span class="right"><a href="/group/members/{{ group.id }}/">{{ userCount }}</a></span>
+		</div>
+		{% if group.owner == userProfile %}
+			<div class="card-content" id="groupChipDiv">
+					{% for x in group.personInterest.all %}
+					<div class="chip" id="personChip-{{x.id}}">
+						<a class="btn-flat truncate" href="/person/{{ x.id }}">{{x.fullName}}</a>
+						<a class="btn-flat"	 onclick="aClicked2({{x.id}});"><i class="fi-x"></i></a>
+					</div>
+					{% endfor %}
+					{% for x in group.movieInterest.all %}
+					<div class="chip"  id="movieChip-{{x.id}}">
+						<a class="btn-flat truncate" href="/movie/{{ x.id }}">{{x.title}}</a>
+						<a class="btn-flat" onclick="aClicked3({{x.id}});"><i class="fi-x"></i></a>
+					</div>
+					{% endfor %}
+			</div>
+			{% else %}
+			<div class="card-content" id="groupChipDiv">
+					{% for x in group.personInterest.all %}
+					<div class="chip" id="personChip-{{x.id}}">
+						<a class="btn-flat truncate" href="/person/{{ x.id }}">{{x.fullName}}</a>
+					</div>
+					{% endfor %}
+					{% for x in group.movieInterest.all %}
+					<div class="chip"  id="movieChip-{{x.id}}">
+						<a class="btn-flat truncate" href="/movie/{{ x.id }}">{{x.title}}</a>
+					</div>
+					{% endfor %}
+			</div>
+			{% endif %}
+	</div>
+
+{% endblock %}

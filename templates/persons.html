@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	People
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'likePerson' %}",
+		data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+
+			if(response.remove == '1'){
+				var $liRem = $('#per-li-'+response.id);
+				$liRem.remove();
+			}
+			else{
+				$('#personList').append('<li id="per-li-'+response.id+'"><a href="/person/'+response.id+'">'+ response.personName +'</a></li>');
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	{% for x in persons %}
+	<div class="col s6 m3">
+		<div class="card">
+			<div class="card-image waves-effect waves-block waves-light">
+				<img src="{{ x.getFrontImage }}">
+				{% if x in userProfile.favPersons.all %}
+					<a id="likeButton" onclick="aClicked( {{ x.id }} );" name="{{ x.id }}"><i id="{{x.id}}" class="fi-heart text-red-color size-24"></i></a>
+				{% else %}
+					<a id="likeButton" onclick="aClicked( {{ x.id }} );"  name="{{ x.id }}"><i id="{{ x.id}}" class="fi-heart text-primary-color size-24"></i></a>
+				{% endif %}
+			</div>
+			<div class="card-action">
+						<a href="{% url 'person' id=x.id  %}" class="size-14">Ver más</a>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+{% include "modules/pagination.html" with var=persons only %}
+
+{% endblock %}

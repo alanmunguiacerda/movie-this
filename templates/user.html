@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{userProfile.user.username}}'s profile
+{% endblock%}
+
+{% block poshead %}
+<script type="text/javascript">
+function aClicked(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'followUser' %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				var $icon = $("#"+response.id);
+				$icon.removeClass(response.quitar);
+				$icon.addClass(response.poner);
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+	<div class="row">
+		<div class="col s12 m6">
+			<div class="card">
+				<div class="card-image waves-effect waves-block waves-light">
+					<img class="activator" src="{{ userFound.getProfilePicture }}">
+					{% if userFound  in userProfile.follows.all %}
+						<a class="btn-flat" id="likeButton" onclick="aClicked( {{ userFound.user.id }} );" name="{{ userFound.user.id }}"><i id="{{userFound.user.id}}" class="fi-heart text-red-color size-24"></i></a>
+					{% else %}
+						<a class="btn-flat" id="likeButton" onclick="aClicked( {{ userFound.user.id }} );"  name="{{ userFound.user.id }}"><i id="{{userFound.user.id}}" class="fi-heart text-primary-color size-24"></i></a>
+					{% endif %}
+				</div>
+				<div class="card-content">
+					<span class="card-title">{{ userFound.user.username }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col s12 cards-container">
+			{% for post in publications %}
+				{% include "modules/userPostBase.html" with post=post %}
+			{% endfor %}
+		</div>
+	</div>
+
+	<div clas="row">
+		{% include "modules/pagination.html" with var=publications only %}
+	</div>
+{% endblock %}

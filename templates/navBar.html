@@ -1,0 +1,60 @@
+<header>
+
+    <ul id="navDesplegableIzq" class="side-nav fixed">
+
+        <li>
+            <!--
+            TODO: Agregar bloque para que en cada vista se pueda personalizar esta imagen
+          -->
+            <img id="bigImage" src="{{ bigImg.image.url }}" alt="" class="circle responsive-img center-block">
+        </li>
+        <div class="divider"></div>
+
+        <li class="bold"><a href="/" class="waves-effect waves-teal">Home</a></li>
+        <li class="bold"><a href="/movies" class="waves-effect waves-teal">Movies</a></li>
+        <li class="bold"><a href="/people" class="waves-effect waves-teal">People</a></li>
+        {% if user.is_authenticated %}
+        <li class="bold"><a href="/post" class="waves-effect waves-teal">Posts</a></li>
+        <li class="bold"><a href="/groups" class="waves-effect waves-teal">Groups</a></li>
+        <ul class="collapsible" data-collapsible="accordion">
+
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal">My groups</a>
+                <div class="collapsible-body">
+                    <ul id="groupList">
+                        {% for x in userProfile.groups.all %}
+                            <li  id="gro-li-{{x.id}}">
+                            {% if x.owner.user.id == user.id %}
+                              <i class="fi-crown right"></i>
+                            {% elif x in userProfile.groupsAdministrated.all %}
+                              <i class="fi-star right"></i>
+                            {% endif %}
+                            <a href="/group/{{x.id}}">{{x.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal">My movies</a>
+                <div class="collapsible-body">
+                    <ul id="movieList">
+                        {% for x in userProfile.favMovies.all %}
+                            <li id="mov-li-{{x.id}}"><a href="/movie/{{x.id}}">{{x.title}} ({{x.releaseDate.year}})</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal">My actors</a>
+                <div class="collapsible-body">
+                    <ul id="personList">
+                        {% for x in userProfile.favPersons.all %}
+                            <li  id="per-li-{{x.id}}"><a href="/person/{{x.id}}">{{x}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+            {% endif %}
+
+        </ul>
+    </ul>
+</header>

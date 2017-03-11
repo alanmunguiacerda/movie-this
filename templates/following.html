@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Movies
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'followUser' %}",
+		data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+
+			if(response.remove == '1'){
+				var $liRem = $('#user-'+response.id);
+				$liRem.remove();
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	{% for x in persons %}
+
+		<div class="col s6 m3" id="user-{{x.user.id}}">
+			<div class="card">
+				<div class="card-image waves-effect waves-block waves-light">
+					<img class="activator" src="{{ x.getProfilePicture }}"/>
+						<a id="likeButton" onclick="aClicked( {{ x.user.id }} );"><i id="{{x.user.id}}" class="fi-heart text-red-color size-24"></i></a>
+				</div>
+				<span class="card-title"><a href="/user/{{x.user.id}}">{{x.user.username}}'s profile</a></span>
+			</div>
+		</div>
+
+	{% endfor %}
+</div>
+{% endblock %}
+
+{% block contentR %}
+<!--
+TODO: sección de películas destacadas
+TODO: sección de filtrado y búsqueda
+-->
+{% endblock %}

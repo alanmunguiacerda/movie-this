@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Groups
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'addGroup' %}",
+		data: {'groupId': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			if(response.remove == '2'){
+				Materialize.toast( response.errorToastMsg, 4000, 'errorToastMsg' );
+			}else{
+				var $icon = $("#"+response.id);
+				$icon.removeClass(response.quitar);
+				$icon.addClass(response.poner);
+				if(response.remove == '1'){
+					var $liRem = $('#gro-li-'+response.id);
+					$liRem.remove();
+				}
+				else{
+					$('#groupList').append('<li id="gro-li-'+response.id+'"><a href="/group/'+response.id+'">'+ response.groupName + '</a></li>');
+				}
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	{% for group in groups %}
+	<div class="col s6 m3">
+		<div class="card">
+			<div class="card-image">
+				<img src='{{ group.getProfilePicture }}'>
+				{% if group in userProfile.groups.all %}
+					<a class="btn-flat" id="likeButton" onclick="aClicked( {{ group.id }} );" name="{{ group.id }}"><i id="{{group.id}}" class="fi-heart text-red-color size-24"></i></a>
+				{% else %}
+					<a class="btn-flat" id="likeButton" onclick="aClicked( {{ group.id }} );"  name="{{ group.id }}"><i id="{{group.id}}" class="fi-heart text-primary-color size-24"></i></a>
+				{% endif %}
+			</div>
+			<div class="card-action">
+				<a href="{% url 'group' id=group.id  %}">{{ group.name }}</a>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<div class="row">
+{% include "modules/pagination.html" with var=groups only %}
+</div>
+
+{% endblock %}
+
+{% block contentR %}
+<div class="row">
+	<div class="col m12 hide-on-small-only">
+		<div class="card">
+			<div class="row card-content accent-color">
+				<div class="col s12 center-align">
+					<a class="btn modal-trigger white-text" href="#modalNewGroup"><i class="fi-plus left"></i>Create</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="modalNewGroup">
+  <div class="modal-content">
+    <div class="row">
+      <div class="col s12 center-align">
+        <h4>New group</h4>
+      </div>
+      <form class="col s12 m10  offset-m1" method="post" action="/createGroup/">{% csrf_token %}
+        <div class="col s12">
+          <input placeholder="Name" id="name" name="name" type="text" required="true" autofocus="true" autocomplete="false">
+        </div>
+        <div class="col s12 center-align">
+          <button class="btn waves-effect waves-light" type="submit" name="type" value="newGroup">Create<i class="fi-send right"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+<div class="card">
+	<div class="card-image waves-effect waves-block waves-light">
+		<img class="activator" src="{{ movie.getFrontImage }}"/>
+		{% if movie in userProfile.favMovies.all %}
+			<a id="likeButton" onclick="movieLiked( {{ movie.id }} );" name="{{ movie.id }}"><i id="{{movie.id}}" class="fi-heart text-red-color size-24"></i></a>
+		{% else %}
+			<a id="likeButton" onclick="movieLiked( {{ movie.id }} );"  name="{{ movie.id }}"><i id="{{movie.id}}" class="fi-heart text-primary-color size-24"></i></a>
+		{% endif %}
+	</div>
+	<div class="card-reveal">
+		<span class="card-title grey-text text-darken-4 size-12"><i class="fi-arrows-compress right size-14"></i><h6>{{movie.title}}</h6></span>
+		<span class="grey-text text-darken-4"><p class="size-14">{{movie.desc}}</p></span>
+		<span class="text-darken-4 right">{{movie.rate}}</span>
+		<span class="grey-text text-darken-4 size-12"><a href="{% url 'movie' id=movie.id  %}" class="size-14">Ver más</a></span>
+	</div>
+</div>

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Members - {{ group.name }}
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'deleteGroupUser' id=group.id %}",
+		data: {'id': arguments[0] ,  'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			if (response.id){
+				$('#chip-'+ response.id).remove();
+			}
+			if (response.errorToastMsg){
+					Materialize.toast( response.errorToastMsg, 4000, 'errorToastMsg' );
+			}
+			},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	<div class="col s12">
+		<ul  id="userChip">
+			{% for x in members %}
+			<div class="chip" id="chip-{{ x.user.id }}">
+				<a href="/user/{{ x.user.id }}">
+				<img src="{{ x.getProfilePicture }}"/>
+				{{x.user.username}}</a>
+				<a class="btn-flat"	 onclick="aClicked({{x.user.id}});">
+					{% if userProfile == group.owner %}<i class="fi-x"></i>{% endif %}
+				</a>
+			</div>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endblock %}

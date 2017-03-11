@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Post
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'deleteUserPost' %}",
+		data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+				if(response.id){
+					$('#pos-'+response.id).remove();
+					Materialize.toast( response.succesToastMsg, 4000, 'succesToastMsg' );
+				}
+			},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+
+{% block contentL %}
+<div class="row">
+	<div class="col s12">
+		<div class="card accent-color">
+			<div class="card-content text-primary-color">
+				<span class="card-title">Say Something</span>
+				<form method="post" action="{% url 'newUserPost' %}">{% csrf_token %}
+					<div class="row">
+						<div class="input-field col s12">
+							<i class="fi-comment prefix"></i>
+							<textarea id="post" class="materialize-textarea" length="1500" maxlength="1500" name="content"></textarea>
+							<label for="post">Post</label>
+						</div>
+						<div class="input-field col s12 center-align">
+								<button id="sendReview" class="btn waves-effect waves-light" type="submit" name="type" value="sendPost">Send<i class="fi-play right"></i></button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 cards-container">
+		{% for post in publications %}
+			{% include "modules/userPostBase.html" with post=post %}
+		{% endfor %}
+	</div>
+</div>
+
+<div clas="row">
+	{% include "modules/pagination.html" with var=publications only %}
+</div>
+{% endblock %}
+
+{% block contentR %}
+
+{% endblock %}

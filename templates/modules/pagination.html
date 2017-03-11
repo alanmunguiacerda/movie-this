@@ -1,0 +1,23 @@
+<div class="row">
+	<ul class="pagination right-align">
+	    {% if var.has_previous %}
+	        <li class="waves-effect"><a href="?page={{ var.previous_page_number }}"><i class="fi-arrow-left left"></i></a></li>
+	    {% else %}
+					<li class="disabled waves-effect"><a href="#!"><i class="fi-arrow-left left"></i></a></li>
+				{% endif %}
+
+				{% for i in var.paginator.page_range %}
+					{% if i == var.number %}
+						<li class="active"><a href="?page={{i}}">{{i}}</a></i>
+					{% else %}
+						<li class="waves-effect"><a href="?page={{i}}">{{i}}</a></i>
+					{% endif %}
+				{% endfor %}
+
+	    {% if var.has_next %}
+	        <li class="waves-effect"><a href="?page={{ var.next_page_number }}"><i class="fi-arrow-right right"></i></a></li>
+			{% else %}
+					<li class="disabled waves-effect"><a href="#!"><i class="fi-arrow-right right"></i></a></li>
+			{% endif %}
+	</ul>
+</div>

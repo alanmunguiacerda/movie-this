@@ -1,0 +1,15 @@
+<div id="pos-{{post.id}}" class="card" style="width:100%;">
+	<div class="row card-content secondary-text-color">
+		<div class="col s12">
+			{% if post.user.user == request.user or request.user == group.owner.user %}
+				<button onclick="aClicked({{ post.id }});" class="btn-flat right"><i class="fi-x btn-flat"></i></button>
+			{% endif %}
+			<blockquote class="divider-color">{{ post.content }}</blockquote>
+			<a href="/user/{{post.user.user.id}}"><div class="chip truncate">
+					<img src="{{ post.user.getProfilePicture }}">
+					{{ post.user.user.username }}
+			</div></a>
+			<span class="right">{{ post.postDate }}</span>
+		</div>
+	</div>
+</div>

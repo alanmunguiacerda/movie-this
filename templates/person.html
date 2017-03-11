@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function aClicked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'likePerson' %}",
+		data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+
+			if(response.remove == '1'){
+				var $liRem = $('#per-li-'+response.id);
+				$liRem.remove();
+			}
+			else{
+				$('#personList').append('<li id="per-li-'+response.id+'"><a href="/person/'+response.id+'">'+ response.personName +'</a></li>');
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block title %}
+	{{ person.name }}
+{% endblock %}
+
+{% block contentL %}
+	<div class="row">
+
+		<div class="col s12 m6">
+			<div class="card">
+				<div class="card-image">
+					<img src="{{ person.getFrontImage }}">
+					{% if person in userProfile.favPersons.all %}
+						<a class="btn-flat" id="likeButton" onclick="aClicked( {{ person.id }} );" name="{{ person.id }}"><i id="{{person.id}}" class="fi-heart text-red-color size-24"></i></a>
+					{% else %}
+						<a  class="btn-flat"  id="likeButton" onclick="aClicked( {{ person.id }} );"  name="{{ person.id }}"><i id="{{person.id}}" class="fi-heart text-primary-color size-24"></i></a>
+					{% endif %}
+				</div>
+				<div class="card-content">
+					<span class="card-title">{{person}}</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="col s12 m6">
+			<div class="card-panel">
+					<span class="card-title grey-text text-darken-4">Bio</span><br/>
+					<ul>
+						<li>First name: {{person.firstName}}</li>
+						<li>Last name: {{person.lastName}}</li>
+						<li>Pseudonym: {{person.pseudonym}}</li>
+						<li>Birthday: {{person.birthDate}}</li>
+						<li>Age: {{person.age}}</li>
+					</ul>
+			</div>
+		</div>
+
+	</div>
+<div class="row">
+	{% for rolRel in rolRelations %}
+		<div class="col s12 m4">
+			<div class="card-panel" id="rol">
+				<span><a href="/movie/{{rolRel.movie.id}}">{{rolRel.movie.title}}</a></span>
+					<ul class="collapsible" data-collapsible="accordion" style="width:100%;margin:0;">
+						{% for x in roles %}
+						{% if x.rolRelation == rolRel %}
+							<li class="bold"><a class="collapsible-header primary-text-color">{{x.rType}}</a>
+								<div class="collapsible-body">
+                  <ul>
+										<li>Part: {{x.part}}</li>
+										<li>Screen time: {{x.screenTime}}</li>
+										<li>Nominations:</li>
+										<ul class="collapsible" data-collapsible="accordion">
+											{% for nom in x.nominations.all %}
+											<li class="bold"><a class="collapsible-header secondary-text-color">{{nom.award}}</a>
+												<div class="collapsible-body">
+													<ul>
+														<li>Winner: {{nom.isWinner}}</li>
+														<li>Date: {{nom.date}}</li>
+													</ul>
+												</div>
+											</li>
+											{% empty %}
+											<li class="secondary-text-color">None</li>
+											{% endfor %}
+										</ul>
+									</ul>
+								</div>
+							</li>
+						{% endif %}
+						{% endfor %}
+					</ul>
+			</div>
+		</div>
+	{% endfor %}
+</div>
+
+{% endblock %}
+
+{% block contentR %}
+	<div class="row">
+		<div class="m12 hide-on-small-only">
+			<div class="card-panel accent-color">
+				<span class="text-primary-color"> Followers: </span><span class="text-primary-color right">{{ person.followers }}</span>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>{% spaceless %}{% block title %}{% endblock %}{% endspaceless %}</title>
+
+    {% block prehead %}{% endblock %}
+
+    {% load staticfiles %}
+  <!-- ESTILOS -->
+    {% comment %}
+        Con foundation
+        <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
+
+    {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/materialize.css' %}" media="screen,projection">
+    <link rel="stylesheet" href="{% static 'css/materializeEdit.css' %}" media="screen,projection">
+    <link rel="stylesheet" href="{% static 'css/foundation-icons/foundation-icons.css' %}" />
+    {#<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">#}
+
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/modernizr.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
+    {% comment %}
+        Con foundation
+        <script type="text/javascript" src="{% static 'js/foundation.min.js' %}"></script>
+    {% endcomment %}
+
+    {% block poshead %}{% endblock %}
+</head>
+
+<body>
+
+    {% include 'topBar.html' %}
+    {% include 'navBar.html' %}
+
+    <main>
+        <div class="row">
+          <div class="col s12">
+            {% block contentBanner %}{% endblock %}
+          </div>
+            <div class="col s12 m12 l9">
+                {% block contentL %}{% endblock %}
+            </div>
+            <div class="col s12 m12 l3">
+                {% block contentR %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    {% block footer %}{% endblock %}
+
+    {% load js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#desplegableDer").sideNav({
+                edge: 'right',
+                menuWidth: 300,
+            });
+            $("#desplegableIzq").sideNav();
+            $('.collapsible').collapsible();
+
+            $('.modal-trigger').leanModal({
+                dismissible: true,
+                opacity: .4,
+            });
+
+            var errorToastMsg = {{ errorToastMsg|js }};
+            for ( var x in errorToastMsg ){
+              Materialize.toast( errorToastMsg[x] , 4000, 'errorToastMsg' );
+            }
+
+            var succesToastMsg = {{  succesToastMsg|js }};
+            for ( var x in succesToastMsg ){
+              Materialize.toast( succesToastMsg[x] , 4000, 'succesToastMsg' );
+            }
+            {% block extraScript %}{% endblock %}
+        });
+    </script>
+</body>
+</html>

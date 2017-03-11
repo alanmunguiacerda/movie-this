@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>{% spaceless %}{% block title %}{% endblock %}{% endspaceless %}</title>
+
+    {% block prehead %}{% endblock %}{% comment %}
+        'prehead' permite agregar cualquier elemento (script, css, etc) 
+        al head ANTES que cualquier otro.
+    {% endcomment %}
+
+    {% load staticfiles %}
+    <!-- ESTILOS -->
+    <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/foundationEdit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fix-sidebar.css' %}">
+
+    <!-- SCRIPTS -->
+    <script language="JavaScript" type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script language="JavaScript" type="text/javascript" src="{% static 'js/modernizr.js' %}"></script>
+    <script language="JavaScript" type="text/javascript" src="{% static 'js/foundation.min.js' %}"></script>
+
+    {% block poshead %}{% endblock %}{% comment %}
+        'poshead' permite agregar cualquier elemento (script, css, etc) 
+        al head DESPUES de que se han cargado todos los demas. Util para cargar
+        plugins de jQuery o CSS que deben de aplicarse encima de cualquier otro
+    {% endcomment %}
+</head>
+
+<body>
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <button class="menu-icon" type="button" data-open="offCanvasLeft"></button>
+        <span class="title-bar-title">Foundation</span>
+      </div>
+      <div class="title-bar-right">
+        <button class="menu-icon" type="button" data-open="offCanvasRight"></button>
+      </div>
+    </div>
+    <div><a href="#" id="open-modal">Open Modal</a></div>
+
+    <div class="row">
+        <div class="medium-6 columns">
+        </div>
+        <p><a data-open="exampleModal1">Click me for a modal</a></p>
+    </div>
+    <div class="reveal-modal" id="exampleModal1" data-reveal>
+          <h1>Awesome. I Have It.</h1>
+          <p class="lead">Your couch. It is mine.</p>
+          <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+          <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(
+            function () {
+            
+                $(document).foundation();
+
+                //- Function to bind handlers to the relevant Foundation events
+                function bindRevealEvents() {
+                    $(window).on(
+                        'closeme.zf.reveal', function () {
+                            alert("'closeAll.zf.Reveal' fired.");
+                        }
+                    );
+            
+                    $(window).on(
+                        'closed.zf.reveal', function () {
+                            alert("'closeAll.zf.Reveal' fired.");
+                        }
+                    );
+                
+                    $(window).on(
+                        'open.zf.reveal', function () {
+                            alert("'open.zf.Reveal' fired.");
+                        }
+                    );
+                }
+                
+                bindRevealEvents();
+                
+                $('#open-modal').on('click', function() {
+                    var $modal = $('<div id="modal" class="reveal" data-reveal><p>This modal was added with JS.</p></div>');
+                    //- append it to [body] ahead of time
+                    $('body').append($modal);
+                
+                    //- re-invoke foundation
+                    $(document).foundation();
+                
+                    //- re-bind events
+                    //bindRevealEvents();
+                
+                    //- Now, try to open it
+                    $modal.foundation('open');
+                    return false;
+                });
+                
+            }
+        );
+      </script>
+</body>
+</html>

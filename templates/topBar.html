@@ -1,0 +1,146 @@
+<header>
+  <nav class="top-nav" id="barraNavSuperior">
+    <div class="container">
+      <div class="nav-wrapper">
+
+          <a href="#" id="desplegableIzq" data-activates="navDesplegableIzq" class="button-collapse top-nav full hide-on-large-only"><i class="fi-list size-48"></i></a>
+          <a href="#" id="desplegableDer" data-activates="navDesplegableDer" class="button-collapse right top-nav full hide-on-large-only"><i class="fi-list size-48"></i></a>
+
+            <a href="{{ pageUrl }}" class="size-24 hide-on-med-and-down" style="margin-left:14rem;">{{ pageName }}</a>
+
+          <a href="{{ pageUrl }}" class="size-24 hide-on-large-only"><center>{{ pageName }}</center></a>
+
+          <ul class="right hide-on-med-and-down">
+          {% if not request.user.is_authenticated %}
+              <li><a class="waves-effect waves-gray btn-flat modal-trigger white-text" href="#modalLogin"> Login </a></li>
+              <li><a class="waves-effect waves-gray btn-flat modal-trigger white-text" href="#modalRegister"> Register </a></li>
+          {% else %}
+            <li>
+              <a class='dropdown-button btn accent-color' href='#' data-activates='dropdown'>{{user.username}}
+                <img id="imgProfile" src="{{ userProfile.getProfilePicture }}" alt="Perfil" class="circle responsive-img"/>
+              </a>
+            </li>
+              <ul id='dropdown' class='dropdown-content'>
+                <li><a href="/profile">Profile<span class="badge"></span></a></li>
+                <li><a href="/following">Following<span class="badge"></span></a></li>
+                <li><a href="/my-groups">Groups<span class="badge"></span></a></li>
+                <li><a href="/my-movies">Movies<span class="badge"></span></a></li>
+                <li><a href="/my-persons">Persons<span class="badge"></span></a></li>
+                <li><a href="/logout">Logout<span class="badge"></span></a></li>
+              </ul>
+          {% endif %}
+          </ul>
+
+          <ul class="side-nav" id="navDesplegableDer">
+            {% if request.user.is_authenticated %}
+              {% load staticfiles %}
+              <li><a href="/profile"><img id="imgProfile" src="{{ userProfile.getProfilePicture }}" alt="Perfil" class="circle responsive-img"/>{{ user.username }}</a></li>
+              <li><a href="/following">Following<span class="badge"></span></a></li>
+              <li><a href="/my-groups">Groups<span class="badge"></span></a></li>
+              <li><a href="/my-movies">Movies<span class="badge"></span></a></li>
+              <li><a href="/my-persons">Persons<span class="badge"></span></a></li>
+              <li><a href="/logout">Logout<span class="badge"></span></a></li>
+            {% else %}
+              <li><a class="waves-effect waves-gray btn-flat modal-trigger" href="#modalLogin">Login</a></li>
+              <li><a class="waves-effect waves-gray btn-flat modal-trigger" href="#modalRegister">Register</a></li>
+            {% endif %}
+          </ul>
+
+        </div>
+    </div>
+  </nav>
+</header>
+
+{% if not request.user.is_authenticated %}
+
+<script type="text/javascript">
+  function checkPass()
+  {
+      var pass1 = document.getElementById('password');
+      var pass2 = document.getElementById('passwordR');
+      var button = document.getElementById('updateDat');
+      var correcto = "#4CAF50";
+      var incorrecto = "#F44336";
+      if(pass1.value == pass2.value){
+          pass2.style.borderColor = correcto;
+          button.disabled = false;
+      }else{
+          pass2.style.borderColor = incorrecto;
+          button.disabled = true;
+      }
+  }
+</script>
+
+<div class="modal" id="modalLogin">
+  <div class="modal-content">
+    <div class="row">
+      <div class="col s12 center-align">
+        <h4>Login</h4>
+      </div>
+      <form class="col s12 m10 offset-m1" method="post" action="/">{% csrf_token %}
+        <div class="col s12">
+          <input placeholder="User" id="username" name="username" type="text" required="true" autofocus="true">
+        </div>
+        <div class="col s12">
+          <input placeholder="Password" id="passwordL" name="password" type="password" required="true">
+        </div>
+        <div class="col s12 center-align">
+          <button class="btn waves-effect waves-light" type="submit" name="type" value="login">Login<i class="fi-check right"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="modalRegister" class="modal">
+  <div class="modal-content">
+      <div class="col s12 center-align">
+        <h4>Register</h4>
+      </div>
+      <form method="post" action="/">{% csrf_token %}
+        <div class="row">
+            <div class="input-field col s12 m6 l6">
+                <input id="username" name="username" type="text" maxlength="50" length="50" class="validate" required="true" autocomplete="off" autofocus="true"/>
+                <label for="username" class="secondary-text-color">Username</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+                <input id="email" name="email" type="email" maxlength="100" length="100" class="validate" required="true" autocomplete="off"/>
+                <label for="email" class="secondary-text-color">Email</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+                <input id="firstname" name="firstname" type="text" maxlength="50" length="50" autocomplete="off"/>
+                <label for="firstname" class="secondary-text-color">First Name</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+                <input id="lastname" name="lastname" type="text" maxlength="50" length="50" autocomplete="off"/>
+                <label for="lastname" class="secondary-text-color">Last Name</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+                <input id="password" name="password" type="password" class="validate" required="true" onkeyup="checkPass();"/>
+                <label for="password" class="secondary-text-color">Password</label>
+            </div>
+            <div class="input-field col s12 m6 l6">
+                <input id="passwordR" name="passwordR" type="password" class="validate" required="true" onkeyup="checkPass();"/>
+                <label for="passwordR" class="secondary-text-color">Repeat password</label>
+            </div>
+            <div class="input-field col s12 center-align">
+                <button id="updateDat" class="btn waves-effect waves-light" type="submit" name="type" value="register">Register<i class="fi-play right"></i></button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+{% else %}
+  <script type="text/javascript">
+    $('.dropdown-button2').dropdown({
+        inDuration: 300,
+        outDuration: 225,
+        constrain_width: true,
+        hover:false,
+        gutter: 0,
+        belowOrigin: true,
+        alignment:'right'
+      });
+  </script>
+{% endif %}

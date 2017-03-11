@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	Movies
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function movieLiked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'likeMovie' %}",
+		data: {'movieId': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+
+			if(response.remove == '1'){
+				var $liRem = $('#mov-li-'+response.id);
+				$liRem.remove();
+			}
+			else{
+				$('#movieList').append('<li id="mov-li-'+response.id+'"><a href="/movie/'+response.id+'">'+ response.movieTitle +'('+response.movieYear+ ')</a></li>');
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	{% for movie in movies %}
+	<div class="col s6 m3">
+		{% include 'modules/movieBase.html' with movie=movie %}
+	</div>
+	{% endfor %}
+</div>
+
+{% include "modules/pagination.html" with var=movies only %}
+
+{% endblock %}
+
+{% block contentR %}
+	{% include 'modules/loadMovies.html' %}
+<!--
+TODO: sección de películas destacadas
+TODO: sección de filtrado y búsqueda
+-->
+{% endblock %}

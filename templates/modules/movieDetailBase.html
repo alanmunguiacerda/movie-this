@@ -1,0 +1,34 @@
+<div class="col s12 m6">
+	<div class="card">
+		<div class="card-image waves-effect waves-block waves-light">
+			<img class="activator" src="{{ movie.getFrontImage }}">
+			{% if movie in userProfile.favMovies.all %}
+				<a id="likeButton" onclick="movieLiked( {{ movie.id }} );" name="{{ movie.id }}"><i id="{{movie.id}}" class="fi-heart text-red-color size-24"></i></a>
+			{% else %}
+				<a id="likeButton" onclick="movieLiked( {{ movie.id }} );"  name="{{ movie.id }}"><i id="{{movie.id}}" class="fi-heart text-primary-color size-24"></i></a>
+			{% endif %}
+		</div>
+		<div class="card-content">
+			<div class="row">
+				<span class="card-title grey-text text-darken-4">{{ movie.title }}</span>
+			</div>
+			<div class="card-action">
+				<div class="row">
+					<div class="col s8 no-padding">
+					{% include "modules/ratingTemplate.html" with  id=movie.id token=csrf_token url="/rateMovie/" rate=userRate.rate identif='Movie'  %}
+					</div>
+					<div class="col s4 right-align">
+						<span id="rateSpanMovie">{{movie.rate}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="col s12 m6">
+	<div class="card-panel">
+		<span class="card-title grey-text text-darken-4">{{ movie.title }}</span>
+		<p>{{ movie.desc }}</p>
+	</div>
+</div>

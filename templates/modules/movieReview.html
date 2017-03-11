@@ -1,0 +1,31 @@
+<div id="rev-{{review.id}}" class="card" style="min-width: 100%">
+	<div class="row card-content secondary-text-color">
+		<div class="col s12">
+			<span class="primary-text-color">{{ review.title }}</span>
+			{% if review.user.user == request.user %}
+			<a class="btn-flat right" onclick="aClicked( {{ review.id }} );"><i class="fi-x secondary-text-color valign-wrapper"></i></a>
+			{% endif %}
+		</div>
+		<div class="col s12">
+			<blockquote class="divider-color">{{ review.content }}</blockquote>
+		</div>
+			<div class="col s5 no-padding">
+				<a href="/user/{{review.user.user.id}}"><div class="chip truncate">
+						<img src="{{ review.user.getProfilePicture }}">
+						{{ review.user.user.username }}
+				</div></a>
+			</div>
+			{% if userProfile != None%}
+				{% load concatString %}
+				{% load reviewRate %}
+				{% with "review-"|addstr:review.id as identifier %}
+				<div class="col s6 no-padding right-align">
+					{% include "modules/ratingTemplate.html" with  id=review.id token=csrf_token url="/rateReview/" rate=review|reviewRate:userProfile identif=identifier  %}
+				</div>
+				{% endwith %}
+			{% endif %}
+			<div class="col s1 no-padding right-align right">
+					<span id="rateSpan{{identifier}}">{{review.rate}}</span>
+			</div>
+	</div>
+</div>

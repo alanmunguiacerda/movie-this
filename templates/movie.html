@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{movie.title}}
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function movieLiked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'likeMovie' %}",
+		data: {'movieId': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+			var $liRem = $('#mov-li-'+response.id);
+			if(response.remove == '1'){
+				$liRem.remove();
+			}
+			else{
+				$('#movieList').append('<li id="mov-li-'+response.id+'"><a href="/movie/'+response.id+'">'+ response.movieTitle +'('+response.movieYear+ ')</a></li>');
+			}
+			$('#favCount').text(response.favCount);
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+
+function aClicked(  ){
+$.ajax({
+	type: "POST",
+	url: "{% url 'deleteReview' %}",
+	data: {'id': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+	dataType: "json",
+	success: function(response) {
+			if(response.id){
+				$('#rev-'+response.id).remove();
+				Materialize.toast(response.succesToastMsg, 4000, 'succesToastMsg');
+			}
+		},
+	error: function(rs, e) {
+
+	}
+});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+<div class="row">
+	{% include 'modules/movieDetailBase.html' with movie=movie %}
+</div>
+
+<div class="row">
+<div  class="col s12 cards-container">
+	{% for review in reviews %}
+			{% include 'modules/movieReview.html' with review=review %}
+	{% endfor %}
+</div>
+</div>
+
+<div class="row">
+	{% include "modules/pagination.html" with var=reviews only %}
+</div>
+
+<div class="row">
+	{% if request.user.is_authenticated %}
+	<div class="col s12">
+		<div class="card accent-color">
+			<div class="card-content text-primary-color">
+				<span class="card-title">Review movie</span>
+				<form method="post" action="{% url 'reviewMovie' id=movie.id %}">{% csrf_token %}
+					<div class="row">
+						<div class="input-field col s12">
+							<i class="fi-pencil prefix"></i>
+							<input  id="title" type="text" name="title" length="150" maxlength="150"/>
+							<label for="title">Title</label>
+						</div>
+						<div class="input-field col s12">
+							<i class="fi-comment prefix"></i>
+							<textarea id="review" class="materialize-textarea"  name="content" length="1500" maxlength="1500"></textarea>
+							<label for="review">Content</label>
+						</div>
+						<div class="input-field col s12 center-align">
+								<button id="sendReview" class="btn waves-effect waves-light" type="submit" name="type" value="sendReview">Review<i class="fi-play right"></i></button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block contentR %}
+	{% include 'modules/loadImage.html' with imageTo=movie urlTo='assignImage'  %}
+
+	<div class="row">
+		<div class="col m12 hide-on-small-only">
+			<div class="card-panel accent-color">
+				<span class="text-primary-color">Favorite:</span><span id="favCount" class="text-primary-color right">{{movie.followers}}</span>
+			</div>
+		</div>
+	</div>
+
+	<!--
+		TODO: sección de películas similares
+		TODO: sección de filtrado y búsqueda
+	-->
+
+	<div class="row">
+		<div class="col m12 hidde-on-small-only">
+			{% for cat in movie.categories.all %}
+			<a href="/movies/cat/{{ cat.id }}">
+				<div class="chip">
+					{{cat}}
+				</div>
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

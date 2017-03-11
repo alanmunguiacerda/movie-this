@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block  title %}
+  Home
+{% endblock %}
+
+{% block poshead %}
+<script type="text/javascript">
+	function movieLiked(  ){
+	$.ajax({
+		type: "POST",
+		url: "{% url 'likeMovie' %}",
+		data: {'movieId': arguments[0], 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+		dataType: "json",
+		success: function(response) {
+			var $icon = $("#"+response.id);
+			$icon.removeClass(response.quitar);
+			$icon.addClass(response.poner);
+
+			if(response.remove == '1'){
+				var $liRem = $('#mov-li-'+response.id);
+				$liRem.remove();
+			}
+			else{
+				$('#movieList').append('<li id="mov-li-'+response.id+'"><a href="/movie/'+response.id+'">'+ response.movieTitle +'('+response.movieYear+ ')</a></li>');
+			}
+		},
+		error: function(rs, e) {
+
+		}
+	});
+};
+</script>
+{% endblock %}
+
+{% block contentL %}
+    <div class="row">
+      <div class="col s12">
+        <h4>New Movies</h4>
+        {% for movie in newMovies %}
+        <div class="col s6 m3">
+          {% include 'modules/movieBase.html' with movie=movie %}
+        </div>
+        {% endfor %}
+
+        <h4>Best Rated Reviews</h4>
+        <div class="row">
+        <div id="rev-{{review.id}}" class="col s12 cards-container">
+        	{% for review in bestMovieReviews %}
+      			{% include 'modules/movieReview.html' with review=review %}
+        	{% endfor %}
+        </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block contentR %}
+  <div class="row">
+    <h4 class="center">Most Liked Movies</h4>
+    {% for movie in mostLikedMovies %}
+    <div class="col s6 m6 l12">
+      {% include 'modules/movieBase.html' with movie=movie %}
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% if group in userProfile.groups.all %}
+	<div class="col s12">
+		<div class="card">
+			<div class="row card-content accent-color">
+				<span class="card-title text-primary-color center-align"><i class="fi-wrench right"></i>Edit</span>
+				<div>
+					{% if group.owner.user == user %}
+					<div class="row center-align">
+						<a href="#modalOwner" class="btn sized-200 modal-trigger"><i class="fi-crown right"></i>Owner</a>
+					</div>
+					<div class="row center-align">
+						<a href="#modalInterest" class="btn sized-200 modal-trigger"><i class="fi-pricetag-multiple right"></i>Interest</a>
+					</div>
+					<div class="row center-align">
+						<a href="#modalPicture" class="btn sized-200 modal-trigger"><i class="fi-photo right"></i>Picture</a>
+					</div>
+					<div class="row center-align">
+						<a href="#modalDelete" class="btn sized-200 modal-trigger"><i class="fi-x right"></i>Delete</a>
+					</div>
+					{% else %}
+					<form action="" method="post">{% csrf_token %}
+						<div class="input-field col s12 center-align">
+							<button class="btn" type="submit" name="type" value="leave"><span class="truncate">Leave Group</span></button>
+						</div>
+					</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}

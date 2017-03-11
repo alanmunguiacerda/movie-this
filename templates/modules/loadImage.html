@@ -1,0 +1,20 @@
+{% if userProfile.userType.nivel > 2 %}
+<div class="row">
+	<div class="col m12 hide-on-small-only">
+		<div class="card-panel accent-color">
+			<form method="post" action="{% url urlTo id=imageTo.id %}">{% csrf_token %}
+				<div class="row">
+					<div class="input-field col s12">
+						<i class="fi-comment prefix"></i>
+						<input name="url" id="text" type="text" required="true"></textarea>
+						<label for="text">Image url</label>
+					</div>
+					<div class="col s12 center-align">
+							<button id="assignImage" class="btn waves-effect waves-light" type="submit" name="type" value="assignImage">Assign<i class="fi-play right"></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endif %}
